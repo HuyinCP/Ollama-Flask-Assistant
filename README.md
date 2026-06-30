@@ -52,7 +52,7 @@ python llm_test.py
 
 <div align="center">
 
-![System Architecture](docs/diagram-export-6-30-2026-3_29_22-PM.svg)
+![System Architecture](docs/diagram-export-6-30-2026-3_35_28-PM.png)
 
 </div>
 
