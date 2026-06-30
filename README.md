@@ -1,22 +1,28 @@
+<div align="center">
 
-
-
+<a href="https://docs.langchain.com/oss/python/langchain/overview">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/images/logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset=".github/images/logo-light.svg">
+    <img alt="LangChain Logo" src=".github/images/logo-dark.svg" width="50%">
+  </picture>
+</a>
 
 # Ollama Flask Assistant
 
-### A local AI assistant for structured customer inquiry analysis.
+**A local AI assistant for structured customer inquiry analysis.**
 
-[Python](https://www.python.org/)
-[Flask](https://flask.palletsprojects.com/)
-[LangChain](https://python.langchain.com/)
-[Ollama](https://ollama.com/)
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-Web_API-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![LangChain](https://img.shields.io/badge/LangChain-LCEL-1C3C3C)](https://python.langchain.com/)
+[![Ollama](https://img.shields.io/badge/Ollama-Qwen_2.5-000000)](https://ollama.com/)
 
+</div>
 
-
-Ollama Flask Assistant is a local LLM-powered web application built with Flask, LangChain, and Ollama. It analyzes a customer message and returns a structured summary, sentiment score, recommended action, and suggested response all without sending prompts to an external model provider.
+Ollama Flask Assistant is a local LLM-powered web application built with **Flask**, **LangChain**, and **Ollama**. It analyzes a customer message and returns a structured summary, sentiment score, recommended action, and suggested response — all without sending prompts to an external model provider.
 
 > [!TIP]
-> This project uses `qwen2.5:7b` by default. You can switch to another Ollama chat model by changing `MODEL_ID` in `config.py`.
+> This project uses `qwen2.5:7b` by default. Switch to another Ollama chat model by changing `MODEL_ID` in `config.py`.
 
 ## Quickstart
 
@@ -52,13 +58,14 @@ python llm_test.py
 
 ## Architecture
 
+<div align="center">
 
+![System Architecture](docs/diagram-export-6-30-2026-3_35_28-PM.png)
 
-System Architecture
+</div>
 
-
-
-Mermaid version (renders on GitHub)
+<details>
+<summary>Mermaid version (renders on GitHub)</summary>
 
 ```mermaid
 flowchart LR
@@ -80,7 +87,7 @@ flowchart LR
     UI -->|Render result| U
 ```
 
-
+</details>
 
 ### Request flow
 
@@ -88,9 +95,11 @@ flowchart LR
 2. `static/script.js` sends `{ "message": "..." }` to `POST /generate`.
 3. `app.py` validates the request and calls `qwen_response()` with the system prompt and user message.
 4. `model.py` runs the LCEL pipeline:
-  ```text
+
+   ```text
    PromptTemplate | ChatOllama | JsonOutputParser
-  ```
+   ```
+
 5. `PromptTemplate` combines the system prompt, user message, and JSON formatting instructions.
 6. `ChatOllama` sends the formatted prompt to the local `qwen2.5:7b` model.
 7. `JsonOutputParser` converts the model output into a structured Python dictionary.
