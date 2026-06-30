@@ -161,9 +161,6 @@ Planned directions to grow this assistant from a single-turn analyzer into a ful
 - [ ] **Agentic workflows with LangGraph** — Orchestrate multi-step reasoning and stateful conversations with LangChain + LangGraph.
 - [ ] **Conversation memory** — Maintain multi-turn context across a chat session.
 
-> [!NOTE]
-> These directions follow the learning path from *Develop Generative AI Applications: Get Started* — moving toward RAG, multimodal, and agentic applications.
-
 ## Next Steps
 
 Ideas to further enhance the application and your skills:
