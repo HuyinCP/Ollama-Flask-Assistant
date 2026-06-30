@@ -1,6 +1,6 @@
 # Trợ lý CSKH nội bộ tại Tiki
 
-> Tài liệu lập kế hoạch (planning). Bối cảnh: **chúng ta là nhân viên Tiki**, đang xây một trợ lý AI nội bộ hỗ trợ đội Chăm sóc khách hàng. Giai đoạn này tập trung **chuẩn bị dữ liệu nghiệp vụ**. Phần fine-tuning và thiết kế RAG sẽ xử lý ở giai đoạn sau.
+> Tài liệu lập kế hoạch (planning). Xây một trợ lý AI nội bộ hỗ trợ đội Chăm sóc khách hàng. Giai đoạn này tập trung **chuẩn bị dữ liệu nghiệp vụ**. Phần fine-tuning và thiết kế RAG sẽ xử lý ở giai đoạn sau.
 
 ## 1. Bối cảnh & mục tiêu
 
