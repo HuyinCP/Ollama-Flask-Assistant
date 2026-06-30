@@ -149,6 +149,32 @@ Ollama-Flask-Assistant/
     └── styles.css         # Interface styles
 ```
 
+## Roadmap
+
+Planned directions to grow this assistant from a single-turn analyzer into a full retrieval-augmented, multimodal, agentic application:
+
+- [ ] **Retrieval-Augmented Generation (RAG)** — Ground responses in a knowledge base so the assistant can answer from your own documents.
+- [ ] **Vector database integration** — Store and retrieve embeddings (e.g. Chroma, FAISS, or Qdrant) to power semantic search over support content.
+- [ ] **Advanced RAG** — Add retrievers, re-ranking, and citation of source passages for more accurate answers.
+- [ ] **Multimodal input** — Accept images alongside text (e.g. screenshots of an error) using a multimodal Ollama model.
+- [ ] **AI agents** — Let the assistant call tools (order lookup, refund processing) instead of only suggesting an action.
+- [ ] **Agentic workflows with LangGraph** — Orchestrate multi-step reasoning and stateful conversations with LangChain + LangGraph.
+- [ ] **Conversation memory** — Maintain multi-turn context across a chat session.
+
+> [!NOTE]
+> These directions follow the learning path from *Develop Generative AI Applications: Get Started* — moving toward RAG, multimodal, and agentic applications.
+
+## Next Steps
+
+Ideas to further enhance the application and your skills:
+
+- **Implement caching** — Cache repeated queries to improve performance and reduce model calls.
+- **Explore advanced LangChain features** — Add memory to maintain conversation context across turns.
+- **Add more models** — Integrate other chat models (e.g. additional Ollama models or other providers).
+- **Implement A/B testing** — Compare responses from different models for the same query.
+- **Enhance error handling** — Add more robust error handling and structured logging.
+- **Explore cloud services** — Consider integrating cloud services to expand the application's capabilities.
+
 ## Resources
 
 - [Ollama documentation](https://docs.ollama.com/)
