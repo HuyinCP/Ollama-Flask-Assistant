@@ -1,167 +1,138 @@
-# Smart Assistant
+<div align="center">
 
-Trợ lý AI chạy **cục bộ (local)** bằng [Ollama](https://ollama.com/) + model `**qwen2.5:7b`**, dùng **LangChain (LCEL)** để dựng luồng xử lý và trả về kết quả ở dạng **JSON có cấu trúc**.
+# Ollama Flask Assistant
 
----
+### A local AI assistant for structured customer inquiry analysis.
 
-## 1. Hệ thống làm gì?
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-Web_API-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![LangChain](https://img.shields.io/badge/LangChain-LCEL-1C3C3C)](https://python.langchain.com/)
+[![Ollama](https://img.shields.io/badge/Ollama-Qwen_2.5-000000)](https://ollama.com/)
 
-Nhận `system_prompt` (vai trò của AI) + `user_prompt` (câu hỏi của người dùng), gọi model qwen2.5 qua Ollama, rồi trả về một JSON gồm 3 trường:
+</div>
 
+Ollama Flask Assistant is a local LLM-powered web application built with Flask, LangChain, and Ollama. It analyzes a customer message and returns a structured summary, sentiment score, recommended action, and suggested response—all without sending prompts to an external model provider.
 
-| Trường      | Kiểu  | Ý nghĩa                                     |
-| ----------- | ----- | ------------------------------------------- |
-| `summary`   | `str` | Tóm tắt câu hỏi của người dùng              |
-| `sentiment` | `int` | Điểm cảm xúc, 0 (tiêu cực) → 100 (tích cực) |
-| `response`  | `str` | Câu trả lời gợi ý cho người dùng            |
+> [!TIP]
+> This project uses `qwen2.5:7b` by default. You can switch to another Ollama chat model by changing `MODEL_ID` in `config.py`.
 
+## Quickstart
 
----
+### Prerequisites
 
-## 2. Yêu cầu môi trường
+- Python 3.12
+- [Ollama](https://ollama.com/) installed and running
 
-- **Python 3.12** (đang chạy trong `venv`)
-- **Ollama** đã cài và đang chạy ở `http://localhost:11434`
-- Model đã pull:
-  ```bash
-  ollama pull qwen2.5:7b
-  ollamat   # kiểm tra model đã có lis
-  ```
-- Thư viện Python:
-  ```bash
-  pip install langchain-ollama langchain-core pydantic flask
-  ```
+### Install
 
----
+```powershell
+ollama pull qwen2.5:7b
 
-## 3. Cấu trúc dự án
+py -3.12 -m venv venv
+.\venv\Scripts\Activate.ps1
 
-```
-Smart Assistant/
-├── config.py     # Cấu hình: địa chỉ Ollama, tên model, tham số sinh text
-├── model.py      # Lõi AI: dựng chain LangChain, schema JSON, hàm gọi model
-├── llm_test.py   # Script test nhanh model.py từ terminal
-├── app.py        # Flask API (hiện đang là khung mẫu, chưa nối model)
-└── README.md     # Tài liệu này
+pip install flask langchain-ollama langchain-core pydantic
 ```
 
----
+### Run
 
-## 4. Mô tả từng file
+```powershell
+python app.py
+```
 
-### `config.py` — Cấu hình tập trung
+Open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
 
-```python
-OLLAMA_HOST = "http://localhost:11434"   # Server Ollama local
-MODEL_ID    = "qwen2.5:7b"               # Model đang dùng
-PARAMETERS  = {                          # Tham số sinh text
-    "temperature": 0.7,                  # 0 = ổn định, cao = sáng tạo hơn
-    "num_predict": 256,                  # số token tối đa sinh ra
-    "top_p": 0.9,
+To test the model pipeline without the web interface:
+
+```powershell
+python llm_test.py
+```
+
+## Architecture
+
+```mermaid
+flowchart LR
+    U[User] -->|Submit message| UI[Web Interface]
+    UI -->|POST /generate| API[Flask API]
+    API --> CFG[System Configuration]
+    API --> CHAIN[LangChain Pipeline]
+
+    subgraph PIPELINE[Model Pipeline]
+        CHAIN --> PROMPT[PromptTemplate]
+        PROMPT --> CHAT[ChatOllama]
+        CHAT --> OLLAMA[Ollama Server]
+        OLLAMA --> QWEN[Qwen 2.5 7B]
+        QWEN --> PARSER[JsonOutputParser]
+    end
+
+    PARSER -->|Structured result| API
+    API -->|JSON response| UI
+    UI -->|Render result| U
+```
+
+### Request flow
+
+1. The user enters a message and submits it in the browser.
+2. `static/script.js` sends `{ "message": "..." }` to `POST /generate`.
+3. `app.py` validates the request and calls `qwen_response()` with the system prompt and user message.
+4. `model.py` runs the LCEL pipeline:
+
+   ```text
+   PromptTemplate | ChatOllama | JsonOutputParser
+   ```
+
+5. `PromptTemplate` combines the system prompt, user message, and JSON formatting instructions.
+6. `ChatOllama` sends the formatted prompt to the local `qwen2.5:7b` model.
+7. `JsonOutputParser` converts the model output into a structured Python dictionary.
+8. Flask adds the processing duration and returns the result to the browser.
+9. The interface renders the response and analysis metadata.
+
+### Response format
+
+```json
+{
+  "summary": "The user needs help resetting a password.",
+  "sentiment": 50,
+  "action": "Provide password reset instructions.",
+  "response": "Use the Forgot Password link on the sign-in page.",
+  "duration": 2.31
 }
 ```
 
-### `model.py` — Lõi xử lý AI
+## Project components
 
-Các thành phần chính:
+- **Web interface** — Collects messages and displays the generated response and analysis.
+- **Flask API** — Validates requests, invokes the model pipeline, and returns JSON.
+- **LangChain LCEL** — Connects prompt formatting, model inference, and output parsing.
+- **Ollama** — Hosts and runs the model locally.
+- **Qwen 2.5** — Generates the structured customer inquiry analysis.
 
-1. `**initialize_model()**` — tạo đối tượng `ChatOllama` từ config.
-2. `**AIResponse` (Pydantic)** — "khuôn" dữ liệu đầu ra mong muốn (3 trường ở trên).
-3. `**json_parser`** — `JsonOutputParser` ép kết quả model về JSON theo khuôn `AIResponse`.
-4. `**qwen_template**` — `PromptTemplate` với 3 chỗ trống: `system_prompt`, `user_prompt`, `format_prompt`.
-5. `**get_ai_response()**` — dựng và chạy LCEL chain.
-6. `**qwen_response()**` — hàm tiện dụng để gọi nhanh.
+## Why this project?
 
-**Luồng LCEL (cốt lõi):**
+- **Local inference** — Prompts are processed by Ollama on your machine.
+- **Structured output** — Pydantic and `JsonOutputParser` produce a predictable response shape.
+- **Model flexibility** — The configured Ollama model can be replaced without changing the Flask routes.
+- **Clear separation of concerns** — UI, API, configuration, and model logic live in separate modules.
+- **Simple development workflow** — The model pipeline can be tested independently through `llm_test.py`.
 
-```python
-chain = template | model | json_parser
-#         (1)        (2)        (3)
-# (1) Điền dữ liệu vào prompt
-# (2) Gửi prompt cho model qwen qua Ollama
-# (3) Parse text trả về thành dict JSON
+## Project structure
+
+```text
+Ollama-Flask-Assistant/
+├── app.py                 # Flask application and routes
+├── config.py              # Model settings and system prompt
+├── model.py               # LangChain pipeline and output schema
+├── llm_test.py            # Standalone model test
+├── templates/
+│   └── index.html         # Chat page
+└── static/
+    ├── script.js          # Browser request and rendering logic
+    └── styles.css         # Interface styles
 ```
 
-> `format_prompt` được sinh tự động bằng `json_parser.get_format_instructions()` — đây là hướng dẫn "hãy trả JSON đúng các field", giúp model biết phải trả đúng định dạng.
+## Resources
 
-### `llm_test.py` — Test nhanh
-
-Gọi `qwen_response()` với một câu hỏi mẫu và in ra `summary`, `sentiment`, `response`.
-
-```bash
-python llm_test.py
-```
-
-Kết quả mẫu:
-
-```
-Summary  : The capital city of Canada is Ottawa.
-Sentiment: 85
-Response : Ottawa is also known for its beautiful Rideau Canal...
-```
-
-### `app.py` — Flask API (khung mẫu)
-
-Hiện có 1 endpoint `POST /generate` nhưng **chưa nối với model** — mới trả về message giả:
-
-```python
-@app.route('/generate', methods=['POST'])
-def generate():
-    return jsonify({"message": "AI response will be generated here"})
-```
-
-> Đây là bước tiếp theo cần làm: cho endpoint này gọi `qwen_response()` và trả JSON thật.
-
----
-
-## 5. Cách chạy
-
-### Chạy thử model (CLI)
-
-```bash
-# Bật venv (PowerShell)
-.\venv\Scripts\Activate.ps1
-
-# Chạy test
-python llm_test.py
-```
-
-### Chạy API Flask
-
-```bash
-python app.py
-# Server chạy ở http://127.0.0.1:5000
-```
-
----
-
-## 6. Sơ đồ luồng dữ liệu
-
-```
-[Người dùng]
-    │  system_prompt + user_prompt
-    ▼
-qwen_response()  ──►  get_ai_response()
-                          │
-                          ▼
-            template | model | json_parser   (LCEL chain)
-                          │
-                          ▼
-                 dict JSON: {summary, sentiment, response}
-```
-
----
-
-## 7. Trạng thái hiện tại & bước tiếp theo
-
-
-| Thành phần                       | Trạng thái                                  |
-| -------------------------------- | ------------------------------------------- |
-| `config.py`                      | ✅ Xong                                      |
-| `model.py` (chain + JSON output) | ✅ Xong, đã test                             |
-| `llm_test.py`                    | ✅ Xong, chạy được                           |
-| `app.py` (Flask API)             | ⏳ Khung mẫu — cần nối với `qwen_response()` |
-| Giao diện web (chat UI)          | ⏳ Chưa làm                                  |
-
-
-**Bước tiếp theo gợi ý:** nối `app.py` với `model.py` để `/generate` nhận `user_prompt` từ request và trả JSON thật.
+- [Ollama documentation](https://docs.ollama.com/)
+- [LangChain Python documentation](https://docs.langchain.com/oss/python/langchain/overview)
+- [Flask documentation](https://flask.palletsprojects.com/)
+- [Qwen 2.5 model on Ollama](https://ollama.com/library/qwen2.5)
