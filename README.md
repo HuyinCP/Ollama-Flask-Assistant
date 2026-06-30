@@ -11,7 +11,7 @@
 
 </div>
 
-Ollama Flask Assistant is a local LLM-powered web application built with Flask, LangChain, and Ollama. It analyzes a customer message and returns a structured summary, sentiment score, recommended action, and suggested response—all without sending prompts to an external model provider.
+Ollama Flask Assistant is a local LLM-powered web application built with Flask, LangChain, and Ollama. It analyzes a customer message and returns a structured summary, sentiment score, recommended action, and suggested response all without sending prompts to an external model provider.
 
 > [!TIP]
 > This project uses `qwen2.5:7b` by default. You can switch to another Ollama chat model by changing `MODEL_ID` in `config.py`.
@@ -50,6 +50,15 @@ python llm_test.py
 
 ## Architecture
 
+<div align="center">
+
+![System Architecture](docs/diagram-export-6-30-2026-3_29_22-PM.svg)
+
+</div>
+
+<details>
+<summary>Mermaid version (renders on GitHub)</summary>
+
 ```mermaid
 flowchart LR
     U[User] -->|Submit message| UI[Web Interface]
@@ -69,6 +78,8 @@ flowchart LR
     API -->|JSON response| UI
     UI -->|Render result| U
 ```
+
+</details>
 
 ### Request flow
 
