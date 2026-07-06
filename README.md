@@ -8,18 +8,18 @@
   </picture>
 </a>
 
-# Ollama Flask Assistant
+# Ollama Gradio Assistant
 
 **A local AI assistant for structured customer inquiry analysis.**
 
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-Web_API-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![Gradio](https://img.shields.io/badge/Gradio-UI-F97316?logo=gradio&logoColor=white)](https://gradio.app/)
 [![LangChain](https://img.shields.io/badge/LangChain-LCEL-1C3C3C)](https://python.langchain.com/)
 [![Ollama](https://img.shields.io/badge/Ollama-Qwen_2.5-000000)](https://ollama.com/)
 
 </div>
 
-Ollama Flask Assistant is a local LLM-powered web application built with **Flask**, **LangChain**, and **Ollama**. It analyzes a customer message and returns a structured summary, sentiment score, recommended action, and suggested response all without sending prompts to an external model provider.
+Ollama Gradio Assistant is a local LLM-powered app built with **Gradio**, **LangChain**, and **Ollama**. It analyzes a customer message and returns a structured summary, sentiment score, recommended action, and suggested response — all without sending prompts to an external model provider.
 
 > [!TIP]
 > This project uses `qwen2.5:7b` by default. Switch to another Ollama chat model by changing `MODEL_ID` in `config.py`.
@@ -39,7 +39,7 @@ ollama pull qwen2.5:7b
 py -3.12 -m venv venv
 .\venv\Scripts\Activate.ps1
 
-pip install flask langchain-ollama langchain-core pydantic
+pip install gradio langchain-ollama langchain-core pydantic
 ```
 
 ### Run
@@ -48,9 +48,9 @@ pip install flask langchain-ollama langchain-core pydantic
 python app.py
 ```
 
-Open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
+Gradio opens a local URL in your browser (default: [http://127.0.0.1:7860](http://127.0.0.1:7860)).
 
-To test the model pipeline without the web interface:
+To test the model pipeline without the UI:
 
 ```powershell
 python llm_test.py
@@ -69,10 +69,10 @@ python llm_test.py
 
 ```mermaid
 flowchart LR
-    U[User] -->|Submit message| UI[Web Interface]
-    UI -->|POST /generate| API[Flask API]
-    API --> CFG[System Configuration]
-    API --> CHAIN[LangChain Pipeline]
+    U[User] -->|Submit message| UI[Gradio UI]
+    UI --> APP[app.py]
+    APP --> CFG[System Configuration]
+    APP --> CHAIN[LangChain Pipeline]
 
     subgraph PIPELINE[Model Pipeline]
         CHAIN --> PROMPT[PromptTemplate]
@@ -82,8 +82,8 @@ flowchart LR
         QWEN --> PARSER[JsonOutputParser]
     end
 
-    PARSER -->|Structured result| API
-    API -->|JSON response| UI
+    PARSER -->|Structured result| APP
+    APP -->|Display fields| UI
     UI -->|Render result| U
 ```
 
@@ -91,20 +91,18 @@ flowchart LR
 
 ### Request flow
 
-1. The user enters a message and submits it in the browser.
-2. `static/script.js` sends `{ "message": "..." }` to `POST /generate`.
-3. `app.py` validates the request and calls `qwen_response()` with the system prompt and user message.
-4. `model.py` runs the LCEL pipeline:
+1. The user enters a message and clicks **Analyze** in the Gradio UI.
+2. `app.py` calls `qwen_response()` with the system prompt and user message.
+3. `model.py` runs the LCEL pipeline:
 
    ```text
    PromptTemplate | ChatOllama | JsonOutputParser
    ```
 
-5. `PromptTemplate` combines the system prompt, user message, and JSON formatting instructions.
-6. `ChatOllama` sends the formatted prompt to the local `qwen2.5:7b` model.
-7. `JsonOutputParser` converts the model output into a structured Python dictionary.
-8. Flask adds the processing duration and returns the result to the browser.
-9. The interface renders the response and analysis metadata.
+4. `PromptTemplate` combines the system prompt, user message, and JSON formatting instructions.
+5. `ChatOllama` sends the formatted prompt to the local `qwen2.5:7b` model.
+6. `JsonOutputParser` converts the model output into a structured Python dictionary.
+7. Gradio displays summary, sentiment, action, response, and processing duration.
 
 ### Response format
 
@@ -120,8 +118,8 @@ flowchart LR
 
 ## Project components
 
-- **Web interface** — Collects messages and displays the generated response and analysis.
-- **Flask API** — Validates requests, invokes the model pipeline, and returns JSON.
+- **Gradio UI** — Collects messages and displays the generated response and analysis.
+- **app.py** — Wires the UI to the model pipeline and adds timing metadata.
 - **LangChain LCEL** — Connects prompt formatting, model inference, and output parsing.
 - **Ollama** — Hosts and runs the model locally.
 - **Qwen 2.5** — Generates the structured customer inquiry analysis.
@@ -130,23 +128,18 @@ flowchart LR
 
 - **Local inference** — Prompts are processed by Ollama on your machine.
 - **Structured output** — Pydantic and `JsonOutputParser` produce a predictable response shape.
-- **Model flexibility** — The configured Ollama model can be replaced without changing the Flask routes.
-- **Clear separation of concerns** — UI, API, configuration, and model logic live in separate modules.
+- **Model flexibility** — The configured Ollama model can be replaced without changing the Gradio handler.
+- **Clear separation of concerns** — UI, configuration, and model logic live in separate modules.
 - **Simple development workflow** — The model pipeline can be tested independently through `llm_test.py`.
 
 ## Project structure
 
 ```text
-Ollama-Flask-Assistant/
-├── app.py                 # Flask application and routes
+Ollama-Gradio-Assistant/
+├── app.py                 # Gradio UI and handler
 ├── config.py              # Model settings and system prompt
 ├── model.py               # LangChain pipeline and output schema
-├── llm_test.py            # Standalone model test
-├── templates/
-│   └── index.html         # Chat page
-└── static/
-    ├── script.js          # Browser request and rendering logic
-    └── styles.css         # Interface styles
+└── llm_test.py            # Standalone model test
 ```
 
 ## Roadmap
@@ -176,5 +169,5 @@ Ideas to further enhance the application and your skills:
 
 - [Ollama documentation](https://docs.ollama.com/)
 - [LangChain Python documentation](https://docs.langchain.com/oss/python/langchain/overview)
-- [Flask documentation](https://flask.palletsprojects.com/)
+- [Gradio documentation](https://www.gradio.app/docs)
 - [Qwen 2.5 model on Ollama](https://ollama.com/library/qwen2.5)
