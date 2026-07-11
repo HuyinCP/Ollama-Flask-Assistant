@@ -6,3 +6,4 @@ pydantic
 playwright
 beautifulsoup4
 markdownify
+requests
