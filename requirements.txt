@@ -3,3 +3,6 @@ pytest
 langchain-ollama
 langchain-core
 pydantic
+playwright
+beautifulsoup4
+markdownify
