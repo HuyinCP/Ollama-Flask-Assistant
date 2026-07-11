@@ -1,7 +1,9 @@
 <div align="center">
   <a href="https://github.com/HuyinCP/Ollama-Flask-Assistant">
     <picture>
-      <img alt="Shopee Help Center Assistant" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee.svg/512px-Shopee.svg.png" width="30%">
+      <source media="(prefers-color-scheme: dark)" srcset=".github/images/logo-dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset=".github/images/logo-light.svg">
+      <img alt="Shopee Help Center Assistant Logo" src=".github/images/logo-dark.svg" width="50%">
     </picture>
   </a>
 </div>
