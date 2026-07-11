@@ -3,3 +3,8 @@ __pycache__/
 *.py[cod]
 .env
 .cursor/
+.github/
+.claude/
+.gemini/
+agents/
+data/
