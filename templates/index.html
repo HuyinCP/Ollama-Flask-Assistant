@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ollama Assistant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Customer Inquiry Analyzer</h1>
+        <p>Local AI assistant powered by <strong>Qwen 2.5 7B</strong> via Ollama + LangChain LCEL.</p>
+        
+        <div class="input-group">
+            <label for="message">Customer message</label>
+            <textarea id="message" rows="4" placeholder="Enter a customer inquiry..."></textarea>
+        </div>
+        <button id="analyze-btn">Analyze</button>
+
+        <div id="results" class="hidden">
+            <div class="result-row">
+                <div class="result-box">
+                    <label>Summary</label>
+                    <div id="out-summary" class="output"></div>
+                </div>
+                <div class="result-box">
+                    <label>Sentiment (0–100)</label>
+                    <div id="out-sentiment" class="output"></div>
+                </div>
+            </div>
+            <div class="result-box">
+                <label>Recommended action</label>
+                <div id="out-action" class="output"></div>
+            </div>
+            <div class="result-box">
+                <label>Suggested response</label>
+                <div id="out-response" class="output"></div>
+            </div>
+            <div class="result-box">
+                <label>Duration (seconds)</label>
+                <div id="out-duration" class="output"></div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>
