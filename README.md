@@ -26,6 +26,10 @@ Dự án này là một hệ thống AI Assistant nội bộ (chạy local qua O
 > [!TIP]
 > Bạn muốn hiểu rõ luồng hoạt động của hệ thống? Hãy xem qua **[Kiến trúc Dự án (ARCHITECTURE.md)](docs/ARCHITECTURE.md)** — tài liệu mô tả chi tiết cách Crawler và AI Assistant kết nối với nhau.
 
+## 🏗️ Kiến trúc hệ thống
+
+![Shopee Help Center Assistant Architecture](img/architecture.png)
+
 ## 📁 Cấu trúc dự án
 
 ```

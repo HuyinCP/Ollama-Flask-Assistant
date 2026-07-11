@@ -11,7 +11,7 @@ OLLAMA_HOST = "http://localhost:11434"
 # Model Settings
 # ============================================================
 LLM_MODEL_ID = "qwen2.5:7b"
-EMBEDDING_MODEL_ID = "nomic-embed-text"  # Placeholder — sẽ cấu hình sau
+EMBEDDING_MODEL_ID = "nomic-embed-text"
 
 # LLM Parameters
 LLM_PARAMETERS = {
