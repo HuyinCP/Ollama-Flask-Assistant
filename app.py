@@ -1,56 +1,38 @@
 import time
-
-import gradio as gr
+from flask import Flask, render_template, request, jsonify
 
 from config import SYSTEM_PROMPT
 from model import qwen_response
 
+app = Flask(__name__)
 
-def analyze(message):
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/api/analyze', methods=['POST'])
+def analyze():
+    data = request.get_json()
+    message = data.get('message', '')
+    
     if not message or not message.strip():
-        return "", None, "", "", None
+        return jsonify({"error": "Message is empty"}), 400
 
     start_time = time.time()
-    result = qwen_response(SYSTEM_PROMPT, message)
+    try:
+        result = qwen_response(SYSTEM_PROMPT, message)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+        
     duration = round(time.time() - start_time, 2)
-
-    return (
-        result["summary"],
-        result["sentiment"],
-        result["action"],
-        result["response"],
-        duration,
-    )
-
-
-with gr.Blocks(title="Ollama Assistant") as demo:
-    gr.Markdown("# Customer Inquiry Analyzer")
-    gr.Markdown("Local AI assistant powered by **Qwen 2.5 7B** via Ollama + LangChain LCEL.")
-
-    message = gr.Textbox(
-        label="Customer message",
-        lines=4,
-        placeholder="Enter a customer inquiry...",
-    )
-    submit = gr.Button("Analyze", variant="primary")
-
-    with gr.Row():
-        summary = gr.Textbox(label="Summary")
-        sentiment = gr.Number(label="Sentiment (0–100)", precision=0)
-    action = gr.Textbox(label="Recommended action")
-    response = gr.Textbox(label="Suggested response", lines=4)
-    duration = gr.Number(label="Duration (seconds)", precision=2)
-
-    submit.click(
-        analyze,
-        inputs=message,
-        outputs=[summary, sentiment, action, response, duration],
-    )
-    message.submit(
-        analyze,
-        inputs=message,
-        outputs=[summary, sentiment, action, response, duration],
-    )
+    
+    return jsonify({
+        "summary": result.get("summary", ""),
+        "sentiment": result.get("sentiment", ""),
+        "action": result.get("action", ""),
+        "response": result.get("response", ""),
+        "duration": duration
+    })
 
 if __name__ == "__main__":
-    demo.launch()
+    app.run(debug=True, port=5000)

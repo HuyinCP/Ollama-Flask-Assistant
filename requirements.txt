@@ -1,0 +1,5 @@
+flask
+pytest
+langchain-ollama
+langchain-core
+pydantic
