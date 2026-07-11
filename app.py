@@ -3,6 +3,11 @@
 import sys
 import time
 import logging
+
+# Fix Windows console encoding for Vietnamese
+sys.stdout.reconfigure(encoding='utf-8')
+sys.stderr.reconfigure(encoding='utf-8')
+
 from flask import Flask, render_template, request, jsonify
 
 from modules.query_engine import create_rag_chain, query
@@ -40,7 +45,7 @@ def chat():
 
     start_time = time.time()
     try:
-        answer = query(rag_chain, question.strip())
+        result = query(rag_chain, question.strip())
     except Exception as e:
         logger.error(f"Query error: {e}")
         return jsonify({"error": str(e)}), 500
@@ -48,7 +53,8 @@ def chat():
     duration = round(time.time() - start_time, 2)
 
     return jsonify({
-        "answer": answer,
+        "answer": result["answer"],
+        "sources": result["sources"],
         "duration": duration,
     })
 

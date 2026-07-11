@@ -35,7 +35,7 @@ def split_documents(documents: List) -> List:
 
 
 def create_vector_store(chunks: List, persist_dir: str = None) -> Chroma:
-    """Tạo vector store từ danh sách chunks.
+    """Tạo vector store từ danh sách chunks (xử lý theo batch).
 
     Args:
         chunks: Danh sách document chunks.
@@ -47,12 +47,22 @@ def create_vector_store(chunks: List, persist_dir: str = None) -> Chroma:
     persist_dir = persist_dir or config.VECTOR_STORE_DIR
     embedding_model = create_embeddings()
 
-    logger.info(f"Đang tạo vector store với {len(chunks)} chunks...")
+    batch_size = 50  # Tránh gửi quá nhiều chunks cùng lúc đến Ollama
+    logger.info(f"Đang tạo vector store với {len(chunks)} chunks (batch_size={batch_size})...")
+
+    # Tạo vector store với batch đầu tiên
     vector_store = Chroma.from_documents(
-        documents=chunks,
+        documents=chunks[:batch_size],
         embedding=embedding_model,
         persist_directory=persist_dir,
     )
+
+    # Thêm các batch tiếp theo
+    for i in range(batch_size, len(chunks), batch_size):
+        batch = chunks[i:i + batch_size]
+        vector_store.add_documents(batch)
+        logger.info(f"  Đã xử lý {min(i + batch_size, len(chunks))}/{len(chunks)} chunks...")
+
     logger.info(f"Vector store đã lưu tại: {persist_dir}")
     return vector_store
 

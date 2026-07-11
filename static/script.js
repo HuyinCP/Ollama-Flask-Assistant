@@ -3,11 +3,29 @@ const messageInput = document.getElementById('message');
 const sendBtn = document.getElementById('send-btn');
 const status = document.getElementById('status');
 
-function addMessage(text, sender) {
+function addMessage(text, sender, sources) {
     const div = document.createElement('div');
     div.className = `msg msg-${sender}`;
     div.textContent = text;
     chatMessages.appendChild(div);
+
+    // Hiển thị sources nếu có
+    if (sources && sources.length > 0) {
+        const srcDiv = document.createElement('div');
+        srcDiv.className = 'msg msg-sources';
+        srcDiv.innerHTML = '<strong>📎 Nguồn tham khảo:</strong>';
+        const list = document.createElement('ul');
+        sources.forEach(src => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span class="src-file">${src.file}</span>
+                <span class="src-preview">${src.preview}...</span>`;
+            li.title = src.path;
+            list.appendChild(li);
+        });
+        srcDiv.appendChild(list);
+        chatMessages.appendChild(srcDiv);
+    }
+
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
@@ -33,7 +51,7 @@ async function sendMessage() {
         if (!response.ok) throw new Error('API request failed');
 
         const data = await response.json();
-        addMessage(data.answer, 'bot');
+        addMessage(data.answer, 'bot', data.sources);
         status.textContent = `Hoàn thành trong ${data.duration}s`;
     } catch (error) {
         addMessage('Đã xảy ra lỗi. Vui lòng thử lại.', 'bot');
