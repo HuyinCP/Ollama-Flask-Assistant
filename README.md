@@ -1,6 +1,6 @@
 <div align="center">
 
-# Shopee Help Center Assistant 🛍️🤖
+# Shopee Help Center Assistant
 
 **A local AI assistant and high-performance crawler for Shopee's Knowledge Base.**
 
