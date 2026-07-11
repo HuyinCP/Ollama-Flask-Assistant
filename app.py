@@ -1,38 +1,57 @@
+"""Flask web interface for the Shopee Help Center Assistant."""
+
+import sys
 import time
+import logging
 from flask import Flask, render_template, request, jsonify
 
-from config import SYSTEM_PROMPT
-from model import qwen_response
+from modules.query_engine import create_rag_chain, query
 
+# ── Logging ──────────────────────────────────────────────────
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler(stream=sys.stdout)],
+)
+logger = logging.getLogger(__name__)
+
+# ── Flask App ────────────────────────────────────────────────
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+# Khởi tạo RAG chain 1 lần duy nhất khi server start
+logger.info("Đang khởi tạo RAG chain (lần đầu có thể mất vài phút)...")
+rag_chain = create_rag_chain()
+logger.info("RAG chain đã sẵn sàng!")
 
-@app.route('/api/analyze', methods=['POST'])
-def analyze():
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
+@app.route("/api/chat", methods=["POST"])
+def chat():
+    """Endpoint nhận câu hỏi và trả lời dựa trên Knowledge Base."""
     data = request.get_json()
-    message = data.get('message', '')
-    
-    if not message or not message.strip():
+    question = data.get("message", "")
+
+    if not question or not question.strip():
         return jsonify({"error": "Message is empty"}), 400
 
     start_time = time.time()
     try:
-        result = qwen_response(SYSTEM_PROMPT, message)
+        answer = query(rag_chain, question.strip())
     except Exception as e:
+        logger.error(f"Query error: {e}")
         return jsonify({"error": str(e)}), 500
-        
+
     duration = round(time.time() - start_time, 2)
-    
+
     return jsonify({
-        "summary": result.get("summary", ""),
-        "sentiment": result.get("sentiment", ""),
-        "action": result.get("action", ""),
-        "response": result.get("response", ""),
-        "duration": duration
+        "answer": answer,
+        "duration": duration,
     })
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

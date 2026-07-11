@@ -2,8 +2,9 @@ flask
 pytest
 langchain-ollama
 langchain-core
+langchain-community
+langchain-text-splitters
+chromadb
 pydantic
-playwright
-beautifulsoup4
-markdownify
 requests
+markdownify

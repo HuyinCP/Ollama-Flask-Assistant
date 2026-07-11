@@ -1,19 +1,52 @@
+"""Configuration settings for the Shopee Help Center Assistant."""
+
+import os
+
+# ============================================================
+# Ollama Server Settings
+# ============================================================
 OLLAMA_HOST = "http://localhost:11434"
 
-MODEL_ID = "qwen2.5:7b"
+# ============================================================
+# Model Settings
+# ============================================================
+LLM_MODEL_ID = "qwen2.5:7b"
+EMBEDDING_MODEL_ID = "nomic-embed-text"  # Placeholder — sẽ cấu hình sau
 
-PARAMETERS = {
-    "temperature": 0.5,   # 0: ổn định/chính xác, 1: sáng tạo hơn
-    "num_predict": 256,   # số token tối đa sinh ra
+# LLM Parameters
+LLM_PARAMETERS = {
+    "temperature": 0.3,       # Thấp hơn → chính xác hơn cho RAG
+    "num_predict": 512,       # Số token tối đa sinh ra
     "top_p": 0.9,
 }
 
-# System prompt — điều khiển vai trò, ngôn ngữ và định dạng đầu ra của Agent
-SYSTEM_PROMPT = (
-    "You are an AI assistant helping with customer inquiries. "
-    "Summarize the user's message, rate its sentiment from 0 to 100, "
-    "recommend the next action to take, "
-    "and provide a helpful and concise response. "
-    "IMPORTANT: Always write ALL output fields (summary, action, response) in English, "
-    "even if the user writes in another language. Never respond in Vietnamese, Chinese, or any other language."
-)
+# ============================================================
+# RAG Pipeline Settings
+# ============================================================
+# Data directory
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data", "shopee")
+
+# Chunking
+CHUNK_SIZE = 500
+CHUNK_OVERLAP = 50
+
+# Retriever
+SIMILARITY_TOP_K = 5
+
+# Vector store persistence
+VECTOR_STORE_DIR = os.path.join(os.path.dirname(__file__), "vector_store")
+
+# ============================================================
+# Prompt Templates
+# ============================================================
+RAG_PROMPT_TEMPLATE = """Bạn là trợ lý AI chuyên trả lời câu hỏi về chính sách và dịch vụ của Shopee.
+Hãy trả lời dựa HOÀN TOÀN vào nội dung tài liệu được cung cấp bên dưới.
+Nếu không tìm thấy thông tin trong tài liệu, hãy nói rõ rằng bạn không có thông tin về vấn đề này.
+Trả lời bằng tiếng Việt, rõ ràng và có cấu trúc.
+
+Tài liệu tham khảo:
+{context}
+
+Câu hỏi: {question}
+
+Trả lời:"""

@@ -11,4 +11,44 @@
 
 </div>
 
-Dự án này là một hệ thống AI Assistant nội bộ (chạy local qua Ollama) được thiết kế chuyên biệt để phân tích và hỗ trợ trả lời các câu hỏi dựa trên CSDL (Knowledge Base) của **Trung tâm trợ giúp Shopee (Shopee Help Center)**. 
+Dự án này là một hệ thống AI Assistant nội bộ (chạy local qua Ollama) được thiết kế chuyên biệt để phân tích và hỗ trợ trả lời các câu hỏi dựa trên CSDL (Knowledge Base) của **Trung tâm trợ giúp Shopee (Shopee Help Center)**.
+
+## 📁 Cấu trúc dự án
+
+```
+Smart Assistant/
+├── config.py                  # Tập trung cấu hình: model, params, prompt, paths
+├── app.py                     # Flask entry point (Web UI)
+├── modules/                   # Business logic (RAG pipeline)
+│   ├── __init__.py            # Export public API
+│   ├── data_loader.py         # Đọc Markdown từ data/shopee/
+│   ├── data_processing.py     # Chunking + Vector Store (Chroma)
+│   ├── llm_interface.py       # ChatOllama + OllamaEmbeddings
+│   └── query_engine.py        # RAG chain (retrieve → prompt → LLM)
+├── scripts/
+│   └── shopee_crawler.py      # Crawler cào dữ liệu Shopee
+├── data/shopee/               # 535+ file Markdown Knowledge Base
+├── templates/ & static/       # Flask frontend
+├── tests/                     # Pytest
+└── requirements.txt
+```
+
+## 🛠️ Installation
+
+```bash
+pip install -r requirements.txt
+ollama pull qwen2.5:7b
+ollama pull nomic-embed-text
+```
+
+## 💻 Usage
+
+```bash
+# Cào dữ liệu (nếu cần cập nhật)
+python scripts/shopee_crawler.py
+
+# Chạy web assistant
+python app.py
+```
+
+Truy cập: `http://127.0.0.1:5000`

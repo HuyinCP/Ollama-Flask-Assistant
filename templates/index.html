@@ -3,44 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ollama Assistant</title>
+    <title>Shopee Help Center Assistant</title>
+    <meta name="description" content="AI Assistant hỏi đáp về chính sách Shopee, chạy local với Ollama + LangChain RAG.">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Customer Inquiry Analyzer</h1>
-        <p>Local AI assistant powered by <strong>Qwen 2.5 7B</strong> via Ollama + LangChain LCEL.</p>
-        
-        <div class="input-group">
-            <label for="message">Customer message</label>
-            <textarea id="message" rows="4" placeholder="Enter a customer inquiry..."></textarea>
-        </div>
-        <button id="analyze-btn">Analyze</button>
+        <h1>Shopee Help Center Assistant</h1>
+        <p>Hỏi đáp chính sách Shopee — powered by <strong>RAG + LangChain + Ollama</strong></p>
 
-        <div id="results" class="hidden">
-            <div class="result-row">
-                <div class="result-box">
-                    <label>Summary</label>
-                    <div id="out-summary" class="output"></div>
-                </div>
-                <div class="result-box">
-                    <label>Sentiment (0–100)</label>
-                    <div id="out-sentiment" class="output"></div>
-                </div>
-            </div>
-            <div class="result-box">
-                <label>Recommended action</label>
-                <div id="out-action" class="output"></div>
-            </div>
-            <div class="result-box">
-                <label>Suggested response</label>
-                <div id="out-response" class="output"></div>
-            </div>
-            <div class="result-box">
-                <label>Duration (seconds)</label>
-                <div id="out-duration" class="output"></div>
-            </div>
+        <div id="chat-box">
+            <div id="chat-messages"></div>
         </div>
+
+        <div class="input-group">
+            <textarea id="message" rows="2" placeholder="Nhập câu hỏi về chính sách Shopee..."></textarea>
+            <button id="send-btn">Gửi</button>
+        </div>
+
+        <div id="status" class="hidden"></div>
     </div>
     <script src="/static/script.js"></script>
 </body>
