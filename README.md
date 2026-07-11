@@ -21,36 +21,36 @@
 
 <br>
 
-Dự án này là một hệ thống AI Assistant nội bộ (chạy local qua Ollama) được thiết kế chuyên biệt để phân tích và hỗ trợ trả lời các câu hỏi dựa trên CSDL (Knowledge Base) của **Trung tâm trợ giúp Shopee (Shopee Help Center)**.
+This project is an internal AI Assistant system (running locally via Ollama) designed specifically to analyze and provide support answers based on the Knowledge Base of the **Shopee Help Center**.
 
 > [!TIP]
-> Bạn muốn hiểu rõ luồng hoạt động của hệ thống? Hãy xem qua **[Kiến trúc Dự án (ARCHITECTURE.md)](docs/ARCHITECTURE.md)** — tài liệu mô tả chi tiết cách Crawler và AI Assistant kết nối với nhau.
+> Want to understand the system workflow clearly? Check out the **[Architecture Documentation (ARCHITECTURE.md)](docs/ARCHITECTURE.md)** — a detailed guide describing how the Crawler and AI Assistant integrate.
 
-## 🏗️ Kiến trúc hệ thống
+## System Architecture
 
 ![Shopee Help Center Assistant Architecture](img/architecture.png)
 
-## 📁 Cấu trúc dự án
+## Project Structure
 
 ```
 Smart Assistant/
-├── config.py                  # Tập trung cấu hình: model, params, prompt, paths
+├── config.py                  # Centralized config: models, params, prompts, paths
 ├── app.py                     # Flask entry point (Web UI)
 ├── modules/                   # Business logic (RAG pipeline)
 │   ├── __init__.py            # Export public API
-│   ├── data_loader.py         # Đọc Markdown từ data/shopee/
+│   ├── data_loader.py         # Read Markdown from data/shopee/
 │   ├── data_processing.py     # Chunking + Vector Store (Chroma)
 │   ├── llm_interface.py       # ChatOllama + OllamaEmbeddings
 │   └── query_engine.py        # RAG chain (retrieve → prompt → LLM)
 ├── scripts/
-│   └── shopee_crawler.py      # Crawler cào dữ liệu Shopee
-├── data/shopee/               # 535+ file Markdown Knowledge Base
+│   └── shopee_crawler.py      # Crawler for Shopee data
+├── data/shopee/               # 535+ Markdown Knowledge Base files
 ├── templates/ & static/       # Flask frontend
 ├── tests/                     # Pytest
 └── requirements.txt
 ```
 
-## 🛠️ Installation
+## Installation
 
 ```bash
 pip install -r requirements.txt
