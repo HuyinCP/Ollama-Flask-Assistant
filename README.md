@@ -40,15 +40,3 @@ pip install -r requirements.txt
 ollama pull qwen2.5:7b
 ollama pull nomic-embed-text
 ```
-
-## 💻 Usage
-
-```bash
-# Cào dữ liệu (nếu cần cập nhật)
-python scripts/shopee_crawler.py
-
-# Chạy web assistant
-python app.py
-```
-
-Truy cập: `http://127.0.0.1:5000`
