@@ -15,6 +15,8 @@ Dự án này là một hệ thống AI Assistant nội bộ (chạy local qua O
 
 ## 📁 Cấu trúc dự án
 
+👉 **Xem giải thích chi tiết về luồng hoạt động tại: [Kiến trúc Dự án (ARCHITECTURE.md)](docs/ARCHITECTURE.md)**
+
 ```
 Smart Assistant/
 ├── config.py                  # Tập trung cấu hình: model, params, prompt, paths
