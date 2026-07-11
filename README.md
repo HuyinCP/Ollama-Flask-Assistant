@@ -24,7 +24,7 @@
 This project is an internal AI Assistant system (running locally via Ollama) designed specifically to analyze and provide support answers based on the Knowledge Base of the **Shopee Help Center**.
 
 > [!TIP]
-> Want to understand the system workflow clearly? Check out the **[Architecture Documentation (ARCHITECTURE.md)](docs/ARCHITECTURE.md)** — a detailed guide describing how the Crawler and AI Assistant integrate.
+> Want to understand the system workflow clearly? Check out the **[Architecture Documentation](docs/ARCHITECTURE.md)** — a detailed guide describing how the Crawler and AI Assistant integrate.
 
 ## System Architecture
 
