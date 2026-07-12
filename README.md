@@ -9,19 +9,19 @@
 </div>
 
 <div align="center">
-  <h3>A local AI assistant and high-performance crawler for Shopee's Knowledge Base.</h3>
+  <h3>An AI assistant and high-performance crawler for Shopee's Knowledge Base.</h3>
 </div>
 
 <div align="center">
   <a href="https://www.python.org/" target="_blank"><img src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white" alt="Python"></a>
   <a href="https://flask.palletsprojects.com/" target="_blank"><img src="https://img.shields.io/badge/Flask-Web%20UI-000000?logo=flask&logoColor=white" alt="Flask"></a>
   <a href="https://python.langchain.com/" target="_blank"><img src="https://img.shields.io/badge/LangChain-LCEL-1C3C3C" alt="LangChain"></a>
-  <a href="https://ollama.com/" target="_blank"><img src="https://img.shields.io/badge/Ollama-Local_LLM-000000" alt="Ollama"></a>
+  <a href="https://ollama.com/" target="_blank"><img src="https://img.shields.io/badge/Ollama-LLM-000000" alt="Ollama"></a>
 </div>
 
 <br>
 
-This project is an internal AI Assistant system (running locally via Ollama) designed specifically to analyze and provide support answers based on the Knowledge Base of the **Shopee Help Center**.
+This project is an internal AI Assistant system (powered by Ollama) designed specifically to analyze and provide support answers based on the Knowledge Base of the **Shopee Help Center**.
 
 > [!TIP]
 > Want to understand the system workflow clearly? Check out the **[Architecture Documentation](docs/ARCHITECTURE.md)** — a detailed guide describing how the Crawler and AI Assistant integrate.
@@ -31,7 +31,7 @@ This project is an internal AI Assistant system (running locally via Ollama) des
 | Category | Technologies |
 |----------|--------------|
 | 🧠 **LLM Orchestration** | ![LangChain](https://img.shields.io/badge/LangChain-1C3C3C?logo=langchain&logoColor=white) |
-| 🔌 **LLM Provider** | ![Ollama](https://img.shields.io/badge/Ollama_local-000000?logo=ollama&logoColor=white) |
+| 🔌 **LLM Provider** | ![Ollama](https://img.shields.io/badge/Ollama-000000?logo=ollama&logoColor=white) |
 | 🗄️ **Vector & Storage** | ![ChromaDB](https://img.shields.io/badge/ChromaDB-FF6B6B?logo=chroma&logoColor=white) |
 | 📐 **Embedding & Reranking**| ![Ollama Embeddings](https://img.shields.io/badge/Ollama_Embeddings-000000?logo=ollama&logoColor=white) |
 | ⚡ **Backend** | ![Flask](https://img.shields.io/badge/Flask-000000?logo=flask&logoColor=white) ![Python](https://img.shields.io/badge/Python_3.12-3776AB?logo=python&logoColor=white) |
@@ -77,18 +77,18 @@ ollama pull nomic-embed-text
 
 ## LLM & Embedding Providers
 
-The project currently uses **Ollama** running locally as the provider for both the LLM and the Embedding model. These are configured in `config.py`.
+The project currently uses **Ollama** as the provider for both the LLM and the Embedding model. These are configured in `config.py`.
 
 ### LLM Provider
 
 | Provider | `LLM_MODEL_ID` | `OLLAMA_HOST` | Cost |
 |----------|----------------|---------------|------|
-| Ollama (local) | `qwen2.5:7b` (default) | `http://localhost:11434` | Free |
+| Ollama | `qwen2.5:7b` (default) | `http://localhost:11434` | Free |
 
 ### Embedding Provider
 
 | Provider | `EMBEDDING_MODEL_ID` | `OLLAMA_HOST` | Cost |
 |----------|----------------------|---------------|------|
-| Ollama (local) | `nomic-embed-text` (default) | `http://localhost:11434` | Free |
+| Ollama | `nomic-embed-text` (default) | `http://localhost:11434` | Free |
 
 You can modify the models used by changing `LLM_MODEL_ID` and `EMBEDDING_MODEL_ID` inside `config.py`.
