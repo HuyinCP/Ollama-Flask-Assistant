@@ -26,6 +26,17 @@ This project is an internal AI Assistant system (running locally via Ollama) des
 > [!TIP]
 > Want to understand the system workflow clearly? Check out the **[Architecture Documentation](docs/ARCHITECTURE.md)** — a detailed guide describing how the Crawler and AI Assistant integrate.
 
+## Tech Stack
+
+| Category | Technologies |
+|----------|--------------|
+| 🧠 **LLM Orchestration** | ![LangChain](https://img.shields.io/badge/LangChain-1C3C3C?logo=langchain&logoColor=white) |
+| 🔌 **LLM Provider** | ![Ollama](https://img.shields.io/badge/Ollama_local-000000?logo=ollama&logoColor=white) |
+| 🗄️ **Vector & Storage** | ![ChromaDB](https://img.shields.io/badge/ChromaDB-FF6B6B?logo=chroma&logoColor=white) |
+| 📐 **Embedding & Reranking**| ![Ollama Embeddings](https://img.shields.io/badge/Ollama_Embeddings-000000?logo=ollama&logoColor=white) |
+| ⚡ **Backend** | ![Flask](https://img.shields.io/badge/Flask-000000?logo=flask&logoColor=white) ![Python](https://img.shields.io/badge/Python_3.12-3776AB?logo=python&logoColor=white) |
+| 📊 **Evaluation & Testing**| ![Pytest](https://img.shields.io/badge/Pytest-0A9EDC?logo=pytest&logoColor=white) |
+
 ## System Architecture
 
 ![Shopee Help Center Assistant Architecture](img/architecture.png)
