@@ -66,16 +66,10 @@ ollama pull nomic-embed-text
 
 ## LLM Providers
 
-Switch provider by changing `LLM_MODEL` in `.env`. Zero code changes.
+The project currently uses **Ollama** running locally as the LLM provider. This is configured in `config.py`.
 
-| Provider | `LLM_MODEL` | `LLM_API_BASE` | Cost |
-|----------|-------------|----------------|------|
-| Ollama (local) | `ollama/qwen3:1.7b` | `http://localhost:11434` | Free |
-| Gemini (cloud) | `gemini/gemini-2.5-flash` | (empty) | Free tier |
-| OpenRouter (cloud) | `openrouter/qwen/qwen3-1.7b:free` | (empty) | Free |
-| vLLM (GPU) | `hosted_vllm/Qwen/Qwen3-1.7B` | `http://localhost:8100/v1` | Self-hosted |
-| Anthropic | `anthropic/claude-sonnet-4-20250514` | (empty) | Pay-per-use |
-| OpenAI (cloud) | `openai/gpt-4o-mini` | (empty) | Pay-per-use |
-| 9Router (gateway)| (empty) | `http://localhost:20128/v1` | Free (with fallback)|
+| Provider | `LLM_MODEL_ID` | `OLLAMA_HOST` | Cost |
+|----------|----------------|---------------|------|
+| Ollama (local) | `qwen2.5:7b` (default) | `http://localhost:11434` | Free |
 
-**Automatic fallback**: Set `LLM_FALLBACK_MODELS=model1,model2` — switches on rate limit errors.
+You can modify the model used by changing `LLM_MODEL_ID` and `EMBEDDING_MODEL_ID` inside `config.py`.
