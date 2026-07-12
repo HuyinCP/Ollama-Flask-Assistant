@@ -57,3 +57,25 @@ pip install -r requirements.txt
 ollama pull qwen2.5:7b
 ollama pull nomic-embed-text
 ```
+
+## API Reference
+
+| Endpoint | Method | Description | Request Body | Response |
+|----------|--------|-------------|--------------|----------|
+| `/api/chat` | `POST` | Ask a question and get a response based on the Knowledge Base. | `{"message": "..."}` | `{"answer": "...", "sources": ["..."], "duration": 1.23}` |
+
+## LLM Providers
+
+Switch provider by changing `LLM_MODEL` in `.env`. Zero code changes.
+
+| Provider | `LLM_MODEL` | `LLM_API_BASE` | Cost |
+|----------|-------------|----------------|------|
+| Ollama (local) | `ollama/qwen3:1.7b` | `http://localhost:11434` | Free |
+| Gemini (cloud) | `gemini/gemini-2.5-flash` | (empty) | Free tier |
+| OpenRouter (cloud) | `openrouter/qwen/qwen3-1.7b:free` | (empty) | Free |
+| vLLM (GPU) | `hosted_vllm/Qwen/Qwen3-1.7B` | `http://localhost:8100/v1` | Self-hosted |
+| Anthropic | `anthropic/claude-sonnet-4-20250514` | (empty) | Pay-per-use |
+| OpenAI (cloud) | `openai/gpt-4o-mini` | (empty) | Pay-per-use |
+| 9Router (gateway)| (empty) | `http://localhost:20128/v1` | Free (with fallback)|
+
+**Automatic fallback**: Set `LLM_FALLBACK_MODELS=model1,model2` — switches on rate limit errors.
