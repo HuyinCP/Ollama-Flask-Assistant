@@ -64,12 +64,20 @@ ollama pull nomic-embed-text
 |----------|--------|-------------|--------------|----------|
 | `/api/chat` | `POST` | Ask a question and get a response based on the Knowledge Base. | `{"message": "..."}` | `{"answer": "...", "sources": ["..."], "duration": 1.23}` |
 
-## LLM Providers
+## LLM & Embedding Providers
 
-The project currently uses **Ollama** running locally as the LLM provider. This is configured in `config.py`.
+The project currently uses **Ollama** running locally as the provider for both the LLM and the Embedding model. These are configured in `config.py`.
+
+### LLM Provider
 
 | Provider | `LLM_MODEL_ID` | `OLLAMA_HOST` | Cost |
 |----------|----------------|---------------|------|
 | Ollama (local) | `qwen2.5:7b` (default) | `http://localhost:11434` | Free |
 
-You can modify the model used by changing `LLM_MODEL_ID` and `EMBEDDING_MODEL_ID` inside `config.py`.
+### Embedding Provider
+
+| Provider | `EMBEDDING_MODEL_ID` | `OLLAMA_HOST` | Cost |
+|----------|----------------------|---------------|------|
+| Ollama (local) | `nomic-embed-text` (default) | `http://localhost:11434` | Free |
+
+You can modify the models used by changing `LLM_MODEL_ID` and `EMBEDDING_MODEL_ID` inside `config.py`.
