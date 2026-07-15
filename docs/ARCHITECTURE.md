@@ -1,73 +1,73 @@
-# Kiến trúc Hệ thống: Shopee Help Center Assistant
+# System Architecture: Shopee Help Center Assistant
 
-Tài liệu này cung cấp cái nhìn tổng quan và chi tiết về cấu trúc hệ thống, luồng dữ liệu (Data Flow), và chức năng của từng file trong dự án. Việc nắm rõ kiến trúc này sẽ giúp các lập trình viên dễ dàng bảo trì, gỡ lỗi và phát triển thêm các tính năng mới.
-
----
-
-## 1. Tổng quan Hệ thống (System Overview)
-
-Dự án là một ứng dụng **RAG (Retrieval-Augmented Generation)** chạy hoàn toàn nội bộ (local). Hệ thống kết hợp các tài liệu từ Shopee Help Center với sức mạnh của LLM cục bộ (thông qua Ollama) để trả lời chính xác các câu hỏi của người dùng dựa trên dữ liệu thực tế.
-
-Kiến trúc hệ thống chia làm 2 pha (phases) chính:
-1. **Data Ingestion Phase (Thu thập & Xử lý dữ liệu):** Cào dữ liệu từ Shopee, cắt nhỏ (chunking), tạo embedding và lưu vào Vector Database.
-2. **Retrieval & QA Phase (Truy xuất & Hỏi đáp):** Nhận câu hỏi từ người dùng, tìm kiếm các tài liệu liên quan trong Vector DB, và đưa vào LLM để sinh ra câu trả lời cùng trích dẫn nguồn.
+This document provides a comprehensive overview of the system architecture, data flow, and the purpose of each file within the project. Understanding this architecture will help developers maintain, debug, and develop new features more easily.
 
 ---
 
-## 2. Sơ đồ Luồng Hoạt động (Data Flow Diagram)
+## 1. System Overview
+
+The project is a local **RAG (Retrieval-Augmented Generation)** application. It integrates documentation from the Shopee Help Center with the capabilities of a local LLM (via Ollama) to provide accurate answers to user queries based on real data.
+
+The system architecture is divided into 2 main phases:
+1. **Data Ingestion Phase:** Scraping data from Shopee, text chunking, generating embeddings, and storing them in a Vector Database.
+2. **Retrieval & QA Phase:** Receiving user queries, retrieving relevant documents from the Vector DB, and passing them to the LLM to generate an answer along with its source citations.
+
+---
+
+## 2. Data Flow Diagram
 
 ![Shopee Help Center Assistant Architecture](../img/architecture.png)
 
 ---
 
-## 3. Giải thích Chức năng Từng File (File-by-File Breakdown)
+## 3. File-by-File Breakdown
 
-Mã nguồn được tổ chức theo **Modules Pattern**, tách biệt rõ ràng các khâu của RAG. Việc này giúp dễ dàng bảo trì và thay thế từng thành phần (ví dụ: thay thế vector DB hoặc thay đổi LLM provider) mà không ảnh hưởng đến phần còn lại.
+The source code follows the **Modules Pattern**, cleanly separating the different stages of the RAG pipeline. This makes it easy to maintain and replace individual components (e.g., swapping the vector DB or changing the LLM provider) without affecting the rest of the system.
 
 ### 🌟 Core Application & Configuration
-| File / Thư mục | Giải thích Chức năng |
+| File / Directory | Purpose & Explanation |
 |---|---|
-| **`app.py`** | **Entry point của ứng dụng Web.**<br>- Khởi tạo Flask Server.<br>- Khởi tạo RAG Pipeline (chỉ chạy 1 lần khi server start).<br>- Định nghĩa các HTTP Endpoints (VD: `/api/chat` nhận câu hỏi POST và trả về JSON). Nơi kết nối Web Client và lõi AI. |
-| **`config.py`** | **Trung tâm Cấu hình (Single Source of Truth).**<br>- Chứa TẤT CẢ các thiết lập của dự án: cấu hình LLM Host, tham số LLM (temperature), Chunk Size, Top K tài liệu truy xuất, và System Prompt (`RAG_PROMPT_TEMPLATE`).<br>- Giúp developer tinh chỉnh hệ thống tập trung. |
-| **`requirements.txt`** | Danh sách các thư viện Python (dependencies) cần thiết để chạy dự án. |
+| **`app.py`** | **Web Application Entry Point.**<br>- Initializes the Flask Server.<br>- Initializes the RAG Pipeline (runs only once on server start).<br>- Defines HTTP Endpoints (e.g., `/api/chat` receives POST requests and returns JSON). It acts as the bridge between the Web Client and the AI core. |
+| **`config.py`** | **Central Configuration (Single Source of Truth).**<br>- Contains ALL project settings: LLM Host configuration, LLM parameters (temperature), Chunk Size, Top-K retrieval count, and the System Prompt (`RAG_PROMPT_TEMPLATE`).<br>- Allows developers to fine-tune the system from a single location. |
+| **`requirements.txt`** | List of Python dependencies required to run the project. |
 
 ### 🧠 Core RAG Modules (`modules/`)
-Thư mục này chứa toàn bộ logic nghiệp vụ xử lý dữ liệu và AI.
+This directory contains the core business logic for data processing and AI.
 
-| File | Giải thích Chức năng |
+| File | Purpose & Explanation |
 |---|---|
-| **`__init__.py`** | Khai báo thư mục `modules` là một package, export các hàm quan trọng. |
-| **`data_loader.py`** | **Chịu trách nhiệm load dữ liệu gốc.**<br>- Quét thư mục `data/shopee/` để đọc toàn bộ các file `.md`.<br>- Chuyển đổi nội dung text thô thành đối tượng `Document` của LangChain (kèm metadata nguồn gốc). |
-| **`data_processing.py`** | **Xử lý Text và lưu trữ Vector.**<br>- Nhận các Document từ `data_loader.py`.<br>- Cắt văn bản dài thành các đoạn (chunks) nhỏ thông qua `RecursiveCharacterTextSplitter`.<br>- Quản lý việc lưu các vector (embeddings) vào hệ thống file thông qua `ChromaDB`. |
-| **`llm_interface.py`** | **Cầu nối với các AI Models (LLM Provider).**<br>- Khởi tạo module Chat (`ChatOllama`) và module Embeddings (`OllamaEmbeddings`).<br>- Cô lập logic gọi API LLM ở một nơi duy nhất. |
-| **`query_engine.py`** | **Trái tim của RAG Pipeline.**<br>- Dùng `LCEL` (LangChain Expression Language) để nối chuỗi: `Retriever` ➜ `Prompt` ➜ `LLM`.<br>- Hàm `query()` thực thi toàn bộ luồng hỏi đáp.<br>- Hàm `_extract_sources()` chịu trách nhiệm phân tích metadata để trả về danh sách các tài liệu tham khảo cho người dùng. |
+| **`__init__.py`** | Declares the `modules` directory as a package and exports important functions. |
+| **`data_loader.py`** | **Responsible for loading raw data.**<br>- Scans the `data/shopee/` directory to read all `.md` files.<br>- Converts raw text content into LangChain `Document` objects (including source metadata). |
+| **`data_processing.py`** | **Text Processing and Vector Storage.**<br>- Receives Documents from `data_loader.py`.<br>- Splits long texts into smaller chunks using `RecursiveCharacterTextSplitter`.<br>- Manages the storage of vectors (embeddings) to the file system via `ChromaDB`. |
+| **`llm_interface.py`** | **Bridge to AI Models (LLM Provider).**<br>- Initializes the Chat module (`ChatOllama`) and Embeddings module (`OllamaEmbeddings`).<br>- Isolates LLM API call logic in one place. |
+| **`query_engine.py`** | **The Heart of the RAG Pipeline.**<br>- Uses `LCEL` (LangChain Expression Language) to chain: `Retriever` ➜ `Prompt` ➜ `LLM`.<br>- The `query()` function executes the entire QA flow.<br>- The `_extract_sources()` function analyzes metadata to return a deduplicated list of reference documents to the user. |
 
-### 🕸️ Data Ingestion (`scripts/` & Storage)
-| File / Thư mục | Giải thích Chức năng |
+### 🕸️ Data Ingestion & Storage (`scripts/` & Data)
+| File / Directory | Purpose & Explanation |
 |---|---|
-| **`scripts/shopee_crawler.py`** | Script chạy offline. Gọi API của Shopee Help Center để cào bài viết, chuyển đổi HTML sang file `.md` rồi lưu lại. |
-| **`data/shopee/`** | Thư mục chứa kho dữ liệu tĩnh (tài liệu Markdown) tạo ra bởi crawler. Đóng vai trò là Knowledge Base. |
-| **`vector_store/`** | Thư mục sinh tự động bởi ChromaDB. Chứa dữ liệu text đã mã hóa thành vector số. Nhờ lưu sẵn tại đây, hệ thống không phải xử lý (embed) lại hàng trăm file Markdown mỗi khi khởi động. |
+| **`scripts/shopee_crawler.py`** | Offline script. Calls the Shopee Help Center API to scrape articles, converts HTML to `.md` files, and saves them. |
+| **`data/shopee/`** | Directory containing static data (Markdown documents) generated by the crawler. Acts as the Knowledge Base. |
+| **`vector_store/`** | Directory automatically generated by ChromaDB. Contains text data encoded as numeric vectors. Thanks to this persistence, the system does not need to re-embed hundreds of Markdown files on every startup. |
 
-### 💻 Giao diện Người dùng (Frontend)
-| File / Thư mục | Giải thích Chức năng |
+### 💻 User Interface (Frontend)
+| File / Directory | Purpose & Explanation |
 |---|---|
-| **`templates/index.html`** | Giao diện chính của ứng dụng (khung chat, bố cục hiển thị). |
-| **`static/`** | Thư mục chứa tài nguyên tĩnh của Frontend. Bao gồm file `.css` (định dạng màu sắc, giao diện) và file `.js` (gửi AJAX request đến server, xử lý animation loading). |
+| **`templates/index.html`** | Main application interface (chat UI, layout structure). |
+| **`static/`** | Directory containing static Frontend assets. Includes `.css` files (styling, layout) and `.js` files (sending AJAX requests to the server, handling loading animations). |
 
 ---
 
-## 4. Hướng dẫn Bảo trì & Tinh chỉnh
+## 4. Maintenance & Tuning Guide
 
-### 4.1. Làm sao để cập nhật dữ liệu mới từ Shopee?
-Nếu Shopee thay đổi chính sách, hệ thống AI sẽ không biết trừ khi bạn cập nhật dữ liệu:
-1. **Xóa Vector DB cũ:** Xóa hoàn toàn thư mục `vector_store/`.
-2. **Cập nhật Markdown:** Chạy lệnh `python scripts/shopee_crawler.py` để hệ thống kéo về bộ dữ liệu mới nhất.
-3. **Build lại DB:** Chạy `python app.py`. Lúc khởi động, hệ thống sẽ thấy thiếu vector store nên sẽ tự động đọc lại các file `.md` mới và tạo embeddings lại từ đầu.
+### 4.1. How to update with new data from Shopee?
+If Shopee changes its policies, the AI system won't know unless you update the data:
+1. **Delete old Vector DB:** Completely delete the `vector_store/` directory.
+2. **Update Markdown:** Run `python scripts/shopee_crawler.py` to pull the latest dataset.
+3. **Rebuild DB:** Run `python app.py`. On startup, the system will detect the missing vector store, automatically read the new `.md` files, and generate embeddings from scratch.
 
-### 4.2. Tinh chỉnh (Tuning) Chất lượng Câu trả lời
-Tất cả các tham số nằm gọn trong `config.py`:
-- **Đổi giọng văn (Tone):** Chỉnh sửa biến `RAG_PROMPT_TEMPLATE`. Ép model luôn trả lời bằng Tiếng Việt hoặc yêu cầu trình bày theo từng bước cụ thể.
-- **Ngữ cảnh bị thiếu:** Nếu AI trả lời thiếu ý, thử tăng tham số `SIMILARITY_TOP_K` (số tài liệu lấy ra).
-- **Tối ưu Chunking:** Nếu văn bản bị cắt ngang làm mất ngữ nghĩa, hãy điều chỉnh `CHUNK_SIZE` và `CHUNK_OVERLAP` để các chunk bao hàm trọn vẹn thông tin hơn.
-- **Độ dài câu trả lời:** Chỉnh thông số `num_predict` trong `LLM_PARAMETERS` (tăng lên nếu đáp án bị cắt ngang).
+### 4.2. Tuning Answer Quality
+All tuning parameters are conveniently located in `config.py`:
+- **Change Tone:** Edit the `RAG_PROMPT_TEMPLATE` variable. You can force the model to always answer in a specific language or format its output step-by-step.
+- **Missing Context:** If the AI's answer lacks details, try increasing the `SIMILARITY_TOP_K` parameter (number of retrieved documents).
+- **Optimize Chunking:** If text is cut off causing a loss of meaning, adjust `CHUNK_SIZE` and `CHUNK_OVERLAP` to ensure chunks encompass complete thoughts.
+- **Answer Length:** Adjust the `num_predict` parameter in `LLM_PARAMETERS` (increase it if answers are being truncated).
