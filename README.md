@@ -93,5 +93,9 @@ The project currently uses **Ollama** as the provider for both the LLM and the E
 
 You can modify the models used by changing `LLM_MODEL_ID` and `EMBEDDING_MODEL_ID` inside `config.py`.
 
+
 ## Deployment: Dự án này sẽ được deploy bằng Docker Container...
 Dự án này sẽ deploy bằng Heroku
+
+## Deployment: Dự án này sẽ được deploy trên AWS EC2..
+Dự án này sẽ deploy bằng Vercel
