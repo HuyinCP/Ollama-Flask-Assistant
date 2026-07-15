@@ -16,25 +16,7 @@ Kiến trúc hệ thống chia làm 2 pha (phases) chính:
 
 ## 2. Sơ đồ Luồng Hoạt động (Data Flow Diagram)
 
-```mermaid
-graph TD
-    subgraph 1. Data Ingestion (Offline)
-        A[scripts/shopee_crawler.py] -->|Cào dữ liệu API| B[(data/shopee/*.md)]
-        B -->|Đọc file| C[modules/data_loader.py]
-        C -->|Chia nhỏ Text| D[modules/data_processing.py]
-        D -->|Embeddings| E[(Chroma Vector DB)]
-    end
-
-    subgraph 2. Retrieval & Generation (Online)
-        U[Người dùng hỏi] -->|Gửi API Request| H[app.py / Flask]
-        H --> F[modules/query_engine.py]
-        E -->|Lấy Top-K Tài liệu tương tự| F
-        F -->|Prompt + Context + Câu hỏi| G[modules/llm_interface.py]
-        G -->|Sinh câu trả lời| F
-        F -->|Trả về JSON (Answer + Sources)| H
-        H <--> I[Web UI: HTML/CSS/JS]
-    end
-```
+![Shopee Help Center Assistant Architecture](../img/architecture.png)
 
 ---
 
