@@ -10,11 +10,11 @@ logger = logging.getLogger(__name__)
 
 
 def create_llm(model_id: str = None, **kwargs) -> ChatOllama:
-    """Khởi tạo ChatOllama LLM.
+    """Initialize ChatOllama LLM.
 
     Args:
-        model_id: ID model Ollama (mặc định lấy từ config).
-        **kwargs: Tham số bổ sung ghi đè config.
+        model_id: ID model Ollama (default: from config).
+        **kwargs: Additional parameters override config.
 
     Returns:
         ChatOllama instance.
@@ -22,7 +22,7 @@ def create_llm(model_id: str = None, **kwargs) -> ChatOllama:
     model_id = model_id or config.LLM_MODEL_ID
     params = {**config.LLM_PARAMETERS, **kwargs}
 
-    logger.info(f"Khởi tạo LLM: {model_id}")
+    logger.info(f"Initialize LLM: {model_id}")
     return ChatOllama(
         model=model_id,
         base_url=config.OLLAMA_HOST,
@@ -31,17 +31,17 @@ def create_llm(model_id: str = None, **kwargs) -> ChatOllama:
 
 
 def create_embeddings(model_id: str = None) -> OllamaEmbeddings:
-    """Khởi tạo Embedding model.
+    """Initialize Embedding model.
 
     Args:
-        model_id: ID embedding model (mặc định lấy từ config).
+        model_id: ID embedding model (default: from config).
 
     Returns:
         OllamaEmbeddings instance.
     """
     model_id = model_id or config.EMBEDDING_MODEL_ID
 
-    logger.info(f"Khởi tạo Embedding model: {model_id}")
+    logger.info(f"Initialize Embedding model: {model_id}")
     return OllamaEmbeddings(
         model=model_id,
         base_url=config.OLLAMA_HOST,
@@ -49,10 +49,10 @@ def create_embeddings(model_id: str = None) -> OllamaEmbeddings:
 
 
 def change_model(new_model_id: str) -> None:
-    """Đổi model LLM đang dùng.
+    """Change current LLM model.
 
     Args:
-        new_model_id: ID model mới.
+        new_model_id: New model ID.
     """
     config.LLM_MODEL_ID = new_model_id
-    logger.info(f"Đã đổi LLM model sang: {new_model_id}")
+    logger.info(f"Changed LLM model to: {new_model_id}")

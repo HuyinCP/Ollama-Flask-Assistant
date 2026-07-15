@@ -7,10 +7,10 @@ Pipeline:
                               llm_interface ───────────────┘
 
 Modules:
-- data_loader:      Đọc file Markdown từ data/shopee/
-- data_processing:  Chunking + tạo/load Vector Store
-- llm_interface:    Khởi tạo ChatOllama + Embedding model
-- query_engine:     Tạo RAG chain (retriever + prompt + LLM)
+- data_loader:      Read Markdown files from data/shopee/
+- data_processing:  Chunking + create/load Vector Store
+- llm_interface:    Initialize ChatOllama + Embedding model
+- query_engine:     RAG chain (retriever + prompt + LLM)
 """
 
 from modules.data_loader import load_documents

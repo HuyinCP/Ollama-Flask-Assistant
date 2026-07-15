@@ -4,7 +4,7 @@ import sys
 import time
 import logging
 
-# Fix Windows console encoding for Vietnamese
+# Windows console encoding for Vietnamese
 sys.stdout.reconfigure(encoding='utf-8')
 sys.stderr.reconfigure(encoding='utf-8')
 
@@ -12,7 +12,7 @@ from flask import Flask, render_template, request, jsonify
 
 from modules.query_engine import create_rag_chain, query
 
-# ── Logging ──────────────────────────────────────────────────
+# Logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -20,13 +20,13 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# ── Flask App ────────────────────────────────────────────────
+# Flask App 
 app = Flask(__name__)
 
-# Khởi tạo RAG chain 1 lần duy nhất khi server start
-logger.info("Đang khởi tạo RAG chain (lần đầu có thể mất vài phút)...")
+# Initialize RAG chain when server starts
+logger.info("Initializing RAG chain (may take a few minutes the first time)...")
 rag_chain = create_rag_chain()
-logger.info("RAG chain đã sẵn sàng!")
+logger.info("RAG chain is ready!")
 
 
 @app.route("/")
@@ -36,7 +36,7 @@ def index():
 
 @app.route("/api/chat", methods=["POST"])
 def chat():
-    """Endpoint nhận câu hỏi và trả lời dựa trên Knowledge Base."""
+    """Receive question and answer based on knowledge base."""
     data = request.get_json()
     question = data.get("message", "")
 

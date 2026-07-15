@@ -12,21 +12,21 @@ logger = logging.getLogger(__name__)
 
 
 def load_documents(data_dir: str = None) -> List:
-    """Đọc toàn bộ file Markdown từ thư mục data/shopee/.
+    """Reads all Markdown files from the data/shopee/ directory.
 
     Args:
-        data_dir: Đường dẫn thư mục chứa file .md (mặc định lấy từ config).
+        data_dir: Directory path containing .md files (default: from config).
 
     Returns:
-        List[Document]: Danh sách LangChain Document objects.
+        List[Document]: List of LangChain Document objects.
     """
     data_dir = data_dir or config.DATA_DIR
 
     if not os.path.isdir(data_dir):
-        logger.error(f"Thư mục dữ liệu không tồn tại: {data_dir}")
+        logger.error(f"Data directory does not exist: {data_dir}")
         return []
 
-    logger.info(f"Đang load tài liệu từ: {data_dir}")
+    logger.info(f"Loading documents from: {data_dir}")
 
     loader = DirectoryLoader(
         data_dir,
@@ -37,5 +37,5 @@ def load_documents(data_dir: str = None) -> List:
     )
 
     documents = loader.load()
-    logger.info(f"Đã load {len(documents)} tài liệu.")
+    logger.info(f"Loaded {len(documents)} documents.")
     return documents

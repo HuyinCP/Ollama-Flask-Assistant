@@ -15,21 +15,21 @@ logger = logging.getLogger(__name__)
 
 
 def _format_docs(docs) -> str:
-    """Nối các document chunks thành 1 chuỗi context."""
+    """Joins document chunks into a single context string."""
     return "\n\n---\n\n".join(doc.page_content for doc in docs)
 
 
 def _extract_sources(docs) -> list:
-    """Trích xuất thông tin nguồn từ các document chunks."""
+    """Extracts source information from document chunks."""
     seen = set()
     sources = []
     for doc in docs:
         source_path = doc.metadata.get("source", "unknown")
         if source_path not in seen:
             seen.add(source_path)
-            # Lấy tên file đẹp hơn
+            # Get file name
             filename = os.path.basename(source_path)
-            # Trích dòng đầu tiên làm preview
+            # Get first line as preview
             preview = doc.page_content[:150].replace("\n", " ").strip()
             sources.append({
                 "file": filename,
@@ -40,10 +40,10 @@ def _extract_sources(docs) -> list:
 
 
 def create_rag_chain(llm=None, vector_store=None) -> tuple:
-    """Tạo RAG chain + retriever riêng biệt.
+    """Creates RAG chain + separate retriever.
 
     Returns:
-        Tuple (chain, retriever) — retriever dùng để lấy sources.
+        Tuple (chain, retriever) — retriever used to retrieve sources.
     """
     llm = llm or create_llm()
     vector_store = vector_store or get_or_create_vector_store()
@@ -57,34 +57,34 @@ def create_rag_chain(llm=None, vector_store=None) -> tuple:
         input_variables=["context", "question"],
     )
 
-    # LCEL chain: format context → prompt → LLM → parse string
+    # LCEL chain: format context -> prompt -> LLM -> parse string
     generate_chain = prompt | llm | StrOutputParser()
 
-    logger.info("RAG chain đã sẵn sàng.")
+    logger.info("RAG chain is ready.")
     return generate_chain, retriever
 
 
 def query(chain_and_retriever: tuple, question: str) -> Dict[str, Any]:
-    """Gửi câu hỏi đến RAG chain và nhận câu trả lời kèm sources.
+    """Send question to RAG chain and receive answer with sources.
 
     Args:
         chain_and_retriever: Tuple (generate_chain, retriever).
-        question: Câu hỏi của người dùng.
+        question: User's question.
 
     Returns:
-        Dict với keys: answer, sources.
+        Dict with keys: answer, sources.
     """
     generate_chain, retriever = chain_and_retriever
     logger.info(f"Query: {question[:80]}...")
 
-    # Bước 1: Retrieve documents
+    # Retrieve documents
     docs = retriever.invoke(question)
 
-    # Bước 2: Generate answer
+    # Generate answer
     context = _format_docs(docs)
     answer = generate_chain.invoke({"context": context, "question": question})
 
-    # Bước 3: Trích xuất sources
+    # Extract sources
     sources = _extract_sources(docs)
 
     return {"answer": answer, "sources": sources}
