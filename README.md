@@ -94,8 +94,25 @@ The project currently uses **Ollama** as the provider for both the LLM and the E
 You can modify the models used by changing `LLM_MODEL_ID` and `EMBEDDING_MODEL_ID` inside `config.py`.
 
 
-## Deployment: Dự án này sẽ được deploy bằng Docker Container...
-Dự án này sẽ deploy bằng Heroku
+## Running with Docker
 
-## Deployment: Dự án này sẽ được deploy trên AWS EC2..
-Dự án này sẽ deploy bằng Vercel
+Since the application requires an active Ollama service, you need to point the container to your host machine's Ollama instance using the `OLLAMA_HOST` environment variable.
+
+1. Build the Docker image:
+```bash
+docker build -t shopee-assistant .
+```
+
+2. Run the Docker container:
+
+**For Windows/Mac (Docker Desktop):**
+```bash
+docker run -d -p 5000:5000 -e OLLAMA_HOST="http://host.docker.internal:11434" shopee-assistant
+```
+
+**For Linux:**
+```bash
+docker run -d -p 5000:5000 --network host shopee-assistant
+```
+
+The application will now be accessible at `http://localhost:5000`.

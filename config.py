@@ -3,7 +3,7 @@
 import os
 
 # Ollama Server Settings
-OLLAMA_HOST = "http://localhost:11434"
+OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 
 # Model Settings
 LLM_MODEL_ID = "qwen2.5:7b"
