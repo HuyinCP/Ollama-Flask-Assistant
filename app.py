@@ -1,4 +1,4 @@
-"""Flask web interface for the Shopee Help Center Assistant."""
+"""FastAPI web interface for the Shopee Help Center Assistant."""
 
 import sys
 import time
@@ -8,7 +8,12 @@ import logging
 sys.stdout.reconfigure(encoding='utf-8')
 sys.stderr.reconfigure(encoding='utf-8')
 
-from flask import Flask, render_template, request, jsonify
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+import uvicorn
 
 from modules.query_engine import create_rag_chain, query
 
@@ -20,44 +25,48 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Flask App 
-app = Flask(__name__)
+# FastAPI App 
+app = FastAPI(title="Shopee Help Center Assistant")
+
+# Mount static files and setup templates
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
 # Initialize RAG chain when server starts
 logger.info("Initializing RAG chain (may take a few minutes the first time)...")
 rag_chain = create_rag_chain()
 logger.info("RAG chain is ready!")
 
+class ChatRequest(BaseModel):
+    message: str
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    return templates.TemplateResponse(request=request, name="index.html")
 
-
-@app.route("/api/chat", methods=["POST"])
-def chat():
+@app.post("/api/chat")
+async def chat(data: ChatRequest):
     """Receive question and answer based on knowledge base."""
-    data = request.get_json()
-    question = data.get("message", "")
+    question = data.message
 
     if not question or not question.strip():
-        return jsonify({"error": "Message is empty"}), 400
+        raise HTTPException(status_code=400, detail="Message is empty")
 
     start_time = time.time()
     try:
+        # Assuming query is synchronous. In a real highly concurrent system, this could be run in a threadpool.
         result = query(rag_chain, question.strip())
     except Exception as e:
         logger.error(f"Query error: {e}")
-        return jsonify({"error": str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
     duration = round(time.time() - start_time, 2)
 
-    return jsonify({
+    return {
         "answer": result["answer"],
         "sources": result["sources"],
         "duration": duration,
-    })
-
+    }
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)

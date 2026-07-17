@@ -1,4 +1,6 @@
-flask
+fastapi
+uvicorn
+jinja2
 pytest
 langchain-ollama
 langchain-core

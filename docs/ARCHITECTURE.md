@@ -27,7 +27,7 @@ The source code follows the **Modules Pattern**, cleanly separating the differen
 ### 🌟 Core Application & Configuration
 | File / Directory | Purpose & Explanation |
 |---|---|
-| **`app.py`** | **Web Application Entry Point.**<br>- Initializes the Flask Server.<br>- Initializes the RAG Pipeline (runs only once on server start).<br>- Defines HTTP Endpoints (e.g., `/api/chat` receives POST requests and returns JSON). It acts as the bridge between the Web Client and the AI core. |
+| **`app.py`** | **Web Application Entry Point.**<br>- Initializes the FastAPI Server.<br>- Initializes the RAG Pipeline (runs only once on server start).<br>- Defines HTTP Endpoints (e.g., `/api/chat` receives POST requests and returns JSON). It acts as the bridge between the Web Client and the AI core. |
 | **`config.py`** | **Central Configuration (Single Source of Truth).**<br>- Contains ALL project settings: LLM Host configuration, LLM parameters (temperature), Chunk Size, Top-K retrieval count, and the System Prompt (`RAG_PROMPT_TEMPLATE`).<br>- Allows developers to fine-tune the system from a single location. |
 | **`requirements.txt`** | List of Python dependencies required to run the project. |
 

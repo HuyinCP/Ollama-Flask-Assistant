@@ -14,7 +14,7 @@
 
 <div align="center">
   <a href="https://www.python.org/" target="_blank"><img src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white" alt="Python"></a>
-  <a href="https://flask.palletsprojects.com/" target="_blank"><img src="https://img.shields.io/badge/Flask-Web%20UI-000000?logo=flask&logoColor=white" alt="Flask"></a>
+  <a href="https://fastapi.tiangolo.com/" target="_blank"><img src="https://img.shields.io/badge/FastAPI-Web%20API-009688?logo=fastapi&logoColor=white" alt="FastAPI"></a>
   <a href="https://python.langchain.com/" target="_blank"><img src="https://img.shields.io/badge/LangChain-LCEL-1C3C3C" alt="LangChain"></a>
   <a href="https://ollama.com/" target="_blank"><img src="https://img.shields.io/badge/Ollama-LLM-000000" alt="Ollama"></a>
 </div>
@@ -34,7 +34,7 @@ This project is an internal AI Assistant system (powered by Ollama) designed spe
 | 🔌 **LLM Provider** | ![Ollama](https://img.shields.io/badge/Ollama-000000?logo=ollama&logoColor=white) |
 | 🗄️ **Vector & Storage** | ![ChromaDB](https://img.shields.io/badge/ChromaDB-FF6B6B?logo=chroma&logoColor=white) |
 | 📐 **Embedding & Reranking**| ![Ollama Embeddings](https://img.shields.io/badge/Ollama_Embeddings-000000?logo=ollama&logoColor=white) |
-| ⚡ **Backend** | ![Flask](https://img.shields.io/badge/Flask-000000?logo=flask&logoColor=white) ![Python](https://img.shields.io/badge/Python_3.12-3776AB?logo=python&logoColor=white) |
+| ⚡ **Backend** | ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white) ![Python](https://img.shields.io/badge/Python_3.12-3776AB?logo=python&logoColor=white) |
 | 📊 **Evaluation & Testing**| ![Pytest](https://img.shields.io/badge/Pytest-0A9EDC?logo=pytest&logoColor=white) |
 | 🐳 **DevOps & Containerization** | ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white) |
 
@@ -47,7 +47,7 @@ This project is an internal AI Assistant system (powered by Ollama) designed spe
 ```
 Smart Assistant/
 ├── config.py                  # Centralized config: models, params, prompts, paths
-├── app.py                     # Flask entry point (Web UI)
+├── app.py                     # FastAPI entry point (Web API/UI)
 ├── modules/                   # Business logic (RAG pipeline)
 │   ├── __init__.py            # Export public API
 │   ├── data_loader.py         # Read Markdown from data/shopee/
@@ -57,7 +57,7 @@ Smart Assistant/
 ├── scripts/
 │   └── shopee_crawler.py      # Crawler for Shopee data
 ├── data/shopee/               # 535+ Markdown Knowledge Base files
-├── templates/ & static/       # Flask frontend
+├── templates/ & static/       # Frontend UI
 ├── tests/                     # Pytest
 └── requirements.txt
 ```
