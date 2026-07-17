@@ -36,6 +36,7 @@ This project is an internal AI Assistant system (powered by Ollama) designed spe
 | 📐 **Embedding & Reranking**| ![Ollama Embeddings](https://img.shields.io/badge/Ollama_Embeddings-000000?logo=ollama&logoColor=white) |
 | ⚡ **Backend** | ![Flask](https://img.shields.io/badge/Flask-000000?logo=flask&logoColor=white) ![Python](https://img.shields.io/badge/Python_3.12-3776AB?logo=python&logoColor=white) |
 | 📊 **Evaluation & Testing**| ![Pytest](https://img.shields.io/badge/Pytest-0A9EDC?logo=pytest&logoColor=white) |
+| 🐳 **DevOps & Containerization** | ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white) |
 
 ## System Architecture
 
