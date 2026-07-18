@@ -1,7 +1,7 @@
 """Module for RAG query: retrieve context from vector store → generate answer via LLM."""
 
 import os
-import logging
+
 from typing import Any, Dict
 
 from langchain_core.prompts import PromptTemplate
@@ -10,7 +10,6 @@ from langchain_core.output_parsers import StrOutputParser
 from modules.llm_interface import create_llm
 from modules.data_processing import get_or_create_vector_store
 import config
-
 
 def _format_docs(docs) -> str:
     """Joins document chunks into a single context string."""

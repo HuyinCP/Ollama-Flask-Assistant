@@ -10,7 +10,6 @@ from modules.data_loader import load_documents
 from modules.llm_interface import create_embeddings
 import config
 
-
 def split_documents(documents: List) -> List:
     """Splits documents into chunks.
 

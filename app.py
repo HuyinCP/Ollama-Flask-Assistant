@@ -30,11 +30,11 @@ class ChatRequest(BaseModel):
     message: str
 
 @app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
+def index(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
 
 @app.post("/api/chat")
-async def chat(data: ChatRequest):
+def chat(data: ChatRequest):
     """Receive question and answer based on knowledge base."""
     question = data.message
 
