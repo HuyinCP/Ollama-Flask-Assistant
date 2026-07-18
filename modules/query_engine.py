@@ -11,8 +11,6 @@ from modules.llm_interface import create_llm
 from modules.data_processing import get_or_create_vector_store
 import config
 
-logger = logging.getLogger(__name__)
-
 
 def _format_docs(docs) -> str:
     """Joins document chunks into a single context string."""
@@ -60,7 +58,6 @@ def create_rag_chain(llm=None, vector_store=None) -> tuple:
     # LCEL chain: format context -> prompt -> LLM -> parse string
     generate_chain = prompt | llm | StrOutputParser()
 
-    logger.info("RAG chain is ready.")
     return generate_chain, retriever
 
 
@@ -75,7 +72,6 @@ def query(chain_and_retriever: tuple, question: str) -> Dict[str, Any]:
         Dict with keys: answer, sources.
     """
     generate_chain, retriever = chain_and_retriever
-    logger.info(f"Query: {question[:80]}...")
 
     # Retrieve documents
     docs = retriever.invoke(question)

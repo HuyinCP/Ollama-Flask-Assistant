@@ -1,7 +1,6 @@
 """Module for processing documents: chunking + vector store creation."""
 
 import os
-import logging
 from typing import List, Optional
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -10,8 +9,6 @@ from langchain_community.vectorstores import Chroma
 from modules.data_loader import load_documents
 from modules.llm_interface import create_embeddings
 import config
-
-logger = logging.getLogger(__name__)
 
 
 def split_documents(documents: List) -> List:
@@ -30,7 +27,6 @@ def split_documents(documents: List) -> List:
     )
 
     chunks = splitter.split_documents(documents)
-    logger.info(f"Split {len(documents)} documents into {len(chunks)} chunks.")
     return chunks
 
 
@@ -48,7 +44,6 @@ def create_vector_store(chunks: List, persist_dir: str = None) -> Chroma:
     embedding_model = create_embeddings()
 
     batch_size = 50  # Avoid sending too many chunks to Ollama at once
-    logger.info(f"Creating vector store with {len(chunks)} chunks (batch_size={batch_size})...")
 
     # Create vector store with the first batch
     vector_store = Chroma.from_documents(
@@ -61,9 +56,7 @@ def create_vector_store(chunks: List, persist_dir: str = None) -> Chroma:
     for i in range(batch_size, len(chunks), batch_size):
         batch = chunks[i:i + batch_size]
         vector_store.add_documents(batch)
-        logger.info(f"  Processed {min(i + batch_size, len(chunks))}/{len(chunks)} chunks...")
 
-    logger.info(f"Vector store saved at: {persist_dir}")
     return vector_store
 
 
@@ -81,14 +74,12 @@ def get_or_create_vector_store(persist_dir: str = None) -> Chroma:
 
     # If vector store already exists on disk -> load it
     if os.path.isdir(persist_dir) and os.listdir(persist_dir):
-        logger.info(f"Loading existing vector store from: {persist_dir}")
         return Chroma(
             persist_directory=persist_dir,
             embedding_function=embedding_model,
         )
 
     # If vector store doesn't exist yet -> build new one
-    logger.info("Vector store doesn't exist yet. Building new one...")
     documents = load_documents()
     chunks = split_documents(documents)
     return create_vector_store(chunks, persist_dir)
