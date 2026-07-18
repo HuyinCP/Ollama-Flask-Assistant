@@ -28,6 +28,7 @@ rag_chain = create_rag_chain()
 
 class ChatRequest(BaseModel):
     message: str
+    session_id: str = "default_session"
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
@@ -37,6 +38,7 @@ def index(request: Request):
 def chat(data: ChatRequest):
     """Receive question and answer based on knowledge base."""
     question = data.message
+    session_id = data.session_id
 
     if not question or not question.strip():
         raise HTTPException(status_code=400, detail="Message is empty")
@@ -44,7 +46,7 @@ def chat(data: ChatRequest):
     start_time = time.time()
     try:
         # Assuming query is synchronous. In a real highly concurrent system, this could be run in a threadpool.
-        result = query(rag_chain, question.strip())
+        result = query(rag_chain, question.strip(), session_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
