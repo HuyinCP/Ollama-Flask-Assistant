@@ -30,7 +30,13 @@ SIMILARITY_TOP_K = 5 # How many chunks to retrieve
 VECTOR_STORE_DIR = os.path.join(os.path.dirname(__file__), "vector_store")
 
 # Prompt Templates
-RAG_PROMPT_TEMPLATE = """Bạn là trợ lý AI chuyên trả lời câu hỏi về chính sách và dịch vụ của Shopee.
+
+CONTEXTUALIZE_Q_SYSTEM_PROMPT = """Bạn là một trợ lý thông minh.
+Dựa vào lịch sử hội thoại và câu hỏi mới nhất của người dùng (có thể tham chiếu đến ngữ cảnh trước đó),
+hãy viết lại câu hỏi này thành một câu hỏi độc lập và đầy đủ ý nghĩa, mà không cần phải xem lại lịch sử chat để hiểu.
+KHÔNG ĐƯỢC trả lời câu hỏi, chỉ cần định dạng lại nó thành một câu hỏi rõ ràng. Nếu câu hỏi đã rõ ràng rồi, hãy giữ nguyên nó."""
+
+RAG_SYSTEM_PROMPT = """Bạn là trợ lý AI chuyên trả lời câu hỏi về chính sách và dịch vụ của Shopee.
 Hãy trả lời dựa HOÀN TOÀN vào nội dung tài liệu được cung cấp bên dưới.
 Nếu không tìm thấy thông tin trong tài liệu, hãy nói rõ rằng bạn không có thông tin về vấn đề này.
 
@@ -39,8 +45,4 @@ QUAN TRỌNG:
 2. GIỮ NGUYÊN các đường dẫn (hyperlink) và tên các nút bấm, mục menu chính xác như trong tài liệu (ví dụ: "vào mục Tôi > chọn thẻ Chờ giao hàng"). KHÔNG tự ý tóm tắt làm mất các bước thao tác cụ thể này.
 
 Tài liệu tham khảo:
-{context}
-
-Câu hỏi: {question}
-
-Trả lời:"""
+{context}"""

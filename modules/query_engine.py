@@ -4,12 +4,23 @@ import os
 
 from typing import Any, Dict
 
-from langchain_core.prompts import PromptTemplate
-from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain.chains import create_history_aware_retriever, create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_core.chat_history import BaseChatMessageHistory
 
 from modules.llm_interface import create_llm
 from modules.data_processing import get_or_create_vector_store
 import config
+
+store = {}
+
+def get_session_history(session_id: str) -> BaseChatMessageHistory:
+    if session_id not in store:
+        store[session_id] = ChatMessageHistory()
+    return store[session_id]
 
 def _format_docs(docs) -> str:
     """Joins document chunks into a single context string."""
@@ -49,35 +60,61 @@ def create_rag_chain(llm=None, vector_store=None) -> tuple:
         search_kwargs={"k": config.SIMILARITY_TOP_K}
     )
 
-    prompt = PromptTemplate(
-        template=config.RAG_PROMPT_TEMPLATE,
-        input_variables=["context", "question"],
+    contextualize_q_prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", config.CONTEXTUALIZE_Q_SYSTEM_PROMPT),
+            MessagesPlaceholder("chat_history"),
+            ("human", "{input}"),
+        ]
     )
 
-    # LCEL chain: format context -> prompt -> LLM -> parse string
-    generate_chain = prompt | llm | StrOutputParser()
+    history_aware_retriever = create_history_aware_retriever(
+        llm, retriever, contextualize_q_prompt
+    )
 
-    return generate_chain, retriever
+    qa_prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", config.RAG_SYSTEM_PROMPT),
+            MessagesPlaceholder("chat_history"),
+            ("human", "{input}"),
+        ]
+    )
+
+    question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
+
+    rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
+
+    conversational_rag_chain = RunnableWithMessageHistory(
+        rag_chain,
+        get_session_history,
+        input_messages_key="input",
+        history_messages_key="chat_history",
+        output_messages_key="answer",
+    )
+
+    return conversational_rag_chain, retriever
 
 
-def query(chain_and_retriever: tuple, question: str) -> Dict[str, Any]:
+def query(chain_and_retriever: tuple, question: str, session_id: str = "default") -> Dict[str, Any]:
     """Send question to RAG chain and receive answer with sources.
 
     Args:
-        chain_and_retriever: Tuple (generate_chain, retriever).
+        chain_and_retriever: Tuple (conversational_rag_chain, retriever).
         question: User's question.
+        session_id: Chat session ID to maintain history.
 
     Returns:
         Dict with keys: answer, sources.
     """
-    generate_chain, retriever = chain_and_retriever
+    conversational_rag_chain, retriever = chain_and_retriever
 
-    # Retrieve documents
-    docs = retriever.invoke(question)
+    result = conversational_rag_chain.invoke(
+        {"input": question},
+        config={"configurable": {"session_id": session_id}}
+    )
 
-    # Generate answer
-    context = _format_docs(docs)
-    answer = generate_chain.invoke({"context": context, "question": question})
+    docs = result["context"]
+    answer = result["answer"]
 
     # Extract sources
     sources = _extract_sources(docs)
