@@ -2,7 +2,6 @@
 
 import sys
 import time
-import logging
 
 # Windows console encoding for Vietnamese
 sys.stdout.reconfigure(encoding='utf-8')
@@ -17,14 +16,6 @@ import uvicorn
 
 from modules.query_engine import create_rag_chain, query
 
-# Logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler(stream=sys.stdout)],
-)
-logger = logging.getLogger(__name__)
-
 # FastAPI App 
 app = FastAPI(title="Shopee Help Center Assistant")
 
@@ -33,9 +24,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # Initialize RAG chain when server starts
-logger.info("Initializing RAG chain (may take a few minutes the first time)...")
 rag_chain = create_rag_chain()
-logger.info("RAG chain is ready!")
 
 class ChatRequest(BaseModel):
     message: str
@@ -57,7 +46,6 @@ async def chat(data: ChatRequest):
         # Assuming query is synchronous. In a real highly concurrent system, this could be run in a threadpool.
         result = query(rag_chain, question.strip())
     except Exception as e:
-        logger.error(f"Query error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
     duration = round(time.time() - start_time, 2)
